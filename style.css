@@ -1,0 +1,11 @@
+body{
+    text-align: center;
+}
+
+td {
+    border: 1px solid;
+}
+
+tr {
+    max-height: 5px;
+}
