@@ -1,42 +1,94 @@
-let width = parseFloat(document.getElementById('width-inp').value);
-let height = parseFloat(document.getElementById('height-inp').value);
+const columnas = parseFloat(document.getElementById("width-inp").value);
+const filas = parseFloat(document.getElementById("height-inp").value);
+let isAlive = false;
+const tabla = document.getElementById("tablero");
 
-let btn = document.getElementById('btn-create');
+const btn = document.getElementById("btn-create");
 
-let width_array = []
-
-btn.addEventListener('click', () => {
-    createGrid(height, width);
-});
-
-function getCoords(x, y) {
-    let cel = document.getElementById(`cel-${x}-${y}`)
-
-    if (cel.style.background != "black") cel.style.background = "black"
-    else cel.style.background = ""
+let tablero = new Array(filas);
+let nuevoTablero = new Array(filas);
+for (let i = 0; i < filas; i++) {
+  tablero[i] = new Array(columnas).fill(0);
+  nuevoTablero[i] = new Array(columnas).fill(0);
 }
 
+for (let i = 0; i < filas; i++) {
+  for (let j = 0; j < columnas; j++) {
+    tablero[i][j] = Math.round(Math.random());
+  }
+}
 
-function createGrid(height, width) {
-    let html = "<table id='grid-table' cellspacing=0 cellpadding=0 >"
-    for (let i = 0; i < height; i++) {
-        html += "<tr>"
-        for (let f = 0; f < width; f++) {
-            width_array.push('.');
-            html += `<td id="cel-${i}-${f}" onmouseup="getCoords(${i}, ${f})">` + `<input type="checkbox" id="checkInp" onclick="console.log('e')">`
-            html += "</td>"
+function crearTabla() {
+  let html = "";
+  for (let i = 0; i < filas; i++) {
+    html += "<tr>";
+    for (let j = 0; j < columnas; j++) {
+      if (tablero[i][j] === 1) {
+        html += "<td style='background-color: black;'></td>";
+      } else {
+        html += "<td style='background-color: white;'></td>";
+      }
+    }
+    html += "</tr>";
+  }
+  tabla.innerHTML = html;
+}
+
+function calcularSiguienteEstado() {
+  if (isAlive) {
+    for (let i = 0; i < filas; i++) {
+      for (let j = 0; j < columnas; j++) {
+        const vecinos = contarVecinos(i, j);
+        if (tablero[i][j] === 1) {
+          if (vecinos < 2 || vecinos > 3) {
+            nuevoTablero[i][j] = 0;
+          } else {
+            nuevoTablero[i][j] = 1;
+          }
+        } else {
+          if (vecinos === 3) {
+            nuevoTablero[i][j] = 1;
+          } else {
+            nuevoTablero[i][j] = 0;
+          }
         }
-        html += "</tr>"
+      }
     }
 
-    html += "</table>"
-    let grid = document.getElementById("tablero")
-    grid.innerHTML = html
-    let gridTable = document.getElementById("grid-table")
-    gridTable.style.width = `${25 * width} px`
-    gridTable.style.height = `${25 * height} px`
+    for (let i = 0; i < filas; i++) {
+      for (let j = 0; j < columnas; j++) {
+        tablero[i][j] = nuevoTablero[i][j];
+      }
+    }
+
+    crearTabla();
+  }
 }
 
+function contarVecinos(fila, columna) {
+  let contador = 0;
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      if (i === 0 && j === 0) {
+        continue;
+      }
+      const vecinoFila = fila + i;
+      const vecinoColumna = columna + j;
+      if (
+        vecinoFila >= 0 &&
+        vecinoFila < filas &&
+        vecinoColumna >= 0 &&
+        vecinoColumna < columnas
+      ) {
+        contador += tablero[vecinoFila][vecinoColumna];
+      }
+    }
+  }
+  return contador;
+}
 
-
-
+btn.addEventListener("click", () => {
+  crearTabla();
+  isAlive = true;
+  setInterval(calcularSiguienteEstado, 500);
+});
