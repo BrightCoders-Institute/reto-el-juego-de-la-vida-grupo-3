@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Juego de la Vida de Conway</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        margin: auto;
+      }
+
+      td {
+        width: 20px;
+        height: 20px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Juego de la vida, abre la consola para visualizar</h2>
+    <label for="width-inp">Ingresa el ancho de la cuadrícula</label>
+    <input type="number" id="width-inp">
+    <label for="height-inp">Ingresa el alto de la cuadrícula</label>
+    <input type="number" id="height-inp">
+    <input type="button" value="Crear cuadrícula" id="btn-create">
+		
+    <table id="tablero"></table>
+
+    <script src="script.js"></script>
+  </body>
+</html>
