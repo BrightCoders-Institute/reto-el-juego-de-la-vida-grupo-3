@@ -1,94 +1,103 @@
-const columnas = parseFloat(document.getElementById("width-inp").value);
-const filas = parseFloat(document.getElementById("height-inp").value);
-let isAlive = false;
-const tabla = document.getElementById("tablero");
+this.btn = document.getElementById("btn-create");
 
-const btn = document.getElementById("btn-create");
 
-let tablero = new Array(filas);
-let nuevoTablero = new Array(filas);
-for (let i = 0; i < filas; i++) {
-  tablero[i] = new Array(columnas).fill(0);
-  nuevoTablero[i] = new Array(columnas).fill(0);
-}
-
-for (let i = 0; i < filas; i++) {
-  for (let j = 0; j < columnas; j++) {
-    tablero[i][j] = Math.round(Math.random());
+class LifeGame {
+  constructor(filas, columnas) {
+    this.filas = filas;
+    this.columnas = columnas;
+    this.tablero = new Array(filas);
+    this.nuevoTablero = new Array(filas);
+    this.tabla = document.getElementById("tablero");
+    this.isAlive = false;
   }
-}
 
-function crearTabla() {
-  let html = "";
-  for (let i = 0; i < filas; i++) {
-    html += "<tr>";
-    for (let j = 0; j < columnas; j++) {
-      if (tablero[i][j] === 1) {
-        html += "<td style='background-color: black;'></td>";
-      } else {
-        html += "<td style='background-color: white;'></td>";
+  createGrid() {
+    for (let i = 0; i < this.filas; i++) {
+      this.tablero[i] = new Array(this.columnas).fill(0);
+      this.nuevoTablero[i] = new Array(this.columnas).fill(0);
+    }
+
+    for (let i = 0; i < this.filas; i++) {
+      for (let j = 0; j < this.columnas; j++) {
+        this.tablero[i][j] = Math.round(Math.random());
       }
     }
-    html += "</tr>";
   }
-  tabla.innerHTML = html;
-}
 
-function calcularSiguienteEstado() {
-  if (isAlive) {
-    for (let i = 0; i < filas; i++) {
-      for (let j = 0; j < columnas; j++) {
-        const vecinos = contarVecinos(i, j);
-        if (tablero[i][j] === 1) {
+  crearTabla() {
+    this.createGrid();
+    let html = "";
+    for (let i = 0; i < this.filas; i++) {
+      html += "<tr>";
+      for (let j = 0; j < this.columnas; j++) {
+        if (this.tablero[i][j] === 1) {
+          html += "<td style='background-color: black;'></td>";
+        } else {
+          html += "<td style='background-color: white;'></td>";
+        }
+      }
+      html += "</tr>";
+    }
+    this.tabla.innerHTML = html;
+  }
+
+  calcularSiguienteEstado() {
+    for (let i = 0; i < this.filas; i++) {
+      for (let j = 0; j < this.columnas; j++) {
+        const vecinos = this.contarVecinos(i, j);
+        if (this.tablero[i][j] === 1) {
           if (vecinos < 2 || vecinos > 3) {
-            nuevoTablero[i][j] = 0;
+            this.nuevoTablero[i][j] = 0;
           } else {
-            nuevoTablero[i][j] = 1;
+            this.nuevoTablero[i][j] = 1;
           }
         } else {
           if (vecinos === 3) {
-            nuevoTablero[i][j] = 1;
+            this.nuevoTablero[i][j] = 1;
           } else {
-            nuevoTablero[i][j] = 0;
+            this.nuevoTablero[i][j] = 0;
           }
         }
       }
     }
 
-    for (let i = 0; i < filas; i++) {
-      for (let j = 0; j < columnas; j++) {
-        tablero[i][j] = nuevoTablero[i][j];
+    for (let i = 0; i < this.filas; i++) {
+      for (let j = 0; j < this.this.columnas; j++) {
+        this.tablero[i][j] = this.nuevoTablero[i][j];
       }
     }
 
     crearTabla();
-  }
-}
 
-function contarVecinos(fila, columna) {
-  let contador = 0;
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      if (i === 0 && j === 0) {
-        continue;
-      }
-      const vecinoFila = fila + i;
-      const vecinoColumna = columna + j;
-      if (
-        vecinoFila >= 0 &&
-        vecinoFila < filas &&
-        vecinoColumna >= 0 &&
-        vecinoColumna < columnas
-      ) {
-        contador += tablero[vecinoFila][vecinoColumna];
+  }
+
+  contarVecinos(fila, columna) {
+    let contador = 0;
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) {
+          continue;
+        }
+        const vecinoFila = fila + i;
+        const vecinoColumna = columna + j;
+        if (
+          vecinoFila >= 0 &&
+          vecinoFila < this.filas &&
+          vecinoColumna >= 0 &&
+          vecinoColumna < this.columnas
+        ) {
+          contador += this.tablero[vecinoFila][vecinoColumna];
+        }
       }
     }
+    return contador;
   }
-  return contador;
+
 }
 
+
 btn.addEventListener("click", () => {
-  crearTabla();
-  isAlive = true;
-  setInterval(calcularSiguienteEstado, 500);
+  let instance = new LifeGame(5, 5, 'tablero');
+  setInterval(instance.calcularSiguienteEstado(), 500);
+  console.log('click');
 });
